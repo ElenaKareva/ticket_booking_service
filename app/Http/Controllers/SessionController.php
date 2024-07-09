@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\SessionsRequest;
+use App\Http\Requests\TicketRequest;
 use App\Models\Session;
-use App\Models\Hall;
 use App\Models\Film;
+use App\Services\SessionService;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SessionController extends Controller
@@ -16,39 +17,30 @@ class SessionController extends Controller
         return view ('hall', ['sessions'=>Session::find($id)]); 
     }
 
-    public function addSession(SessionsRequest $request) 
+    public function  addSession(SessionsRequest $request, SessionService $sessionService) 
     {
-        $session = new Session();
-        $session->date = $request->input('date');
-        $session->session_start = $request->input('time');
-        $session->hall_id = $request->input('id');
-        $session->title_film = $request->input('film');
-        $hall_name = Hall::where('id', $request->id)->first()->name;
-        $hall_config = Hall::where('id', $request->id)->first()->config;
-        $active_hall = Hall::where('id', $request->id)->first()->active_hall;
-        $session->name_hall = $hall_name;
-        $session->config_hall = $hall_config;
-        $session->active_hall = $active_hall;
-        $id_film = Film::where('title', $request->film)->first()->id;
-        $session->film_id = $id_film;
-        $time = $request->input('time');
-        $stime = explode(':', $time);
-        $minute_start = round((($stime[0] * 60) + $stime[1]) / 2);
-        $session->minute_start = $minute_start;
-        $duration_film = Film::where('title', $request->film)->first()->duration;
-        $session->duration = round($duration_film / 2);
-        $minute_finish = round($minute_start + ($duration_film / 2));
-        $session->minute_finish = $minute_finish;
-
-        if (!Session::where('hall_id', $request->id)
-            ->where('date', $request->date)
-            ->where('minute_start', '<=', $minute_start)
-            ->where('minute_finish', '>=', $minute_start)->first()) {
-                $session->save();
-                return redirect()->route('admin')->with('success', 'Сеанс успешно добавлен');
-            } else {
-                return redirect()->route('admin')->with('alert-danger', 'Время сеансов совпадает');
-            } 
+        {
+            $session = $sessionService->addSession($request);
+            $time = $request->input('time');
+            $stime = explode(':', $time);
+            $minute_start = round((($stime[0] * 60) + $stime[1]) / 2);
+            $session->minute_start = $minute_start;
+            $duration_film = Film::where('title', $request->film)->first()->duration;
+            $session->duration = round($duration_film / 2);
+            $minute_finish = round($minute_start + ($duration_film / 2));
+            $session->minute_finish = $minute_finish;
+    
+            if (!Session::where('hall_id', $request->id)
+                ->where('date', $request->date)
+                ->where('minute_start', '<=', $minute_start)
+                ->where('minute_finish', '>=', $minute_start)->first()) {
+                   $session->save();
+                   return redirect()->route('admin')->with('success', 'Сеанс успешно добавлен');
+                } else {
+                    return redirect()->route('admin')->with('alert-danger', 'Время сеансов совпадает');
+        }
+     
+        }
     }
 
     public function deleteSession($id) 
@@ -99,7 +91,7 @@ class SessionController extends Controller
         ]); 
     }
 
-    public function ticket(Request $request) 
+    public function ticket(TicketRequest $request) 
     {
         $QRvalue = 'На фильм: ' . $request->input('film_title') . PHP_EOL . 'Места: ' . $request->input('places') . PHP_EOL . 'В зале: ' . $request->input('hall_name') . PHP_EOL . 'Начало сеанса: ' . $request->input('session_start') . ' ' . date('d.m.Y', strtotime($request->input('session_date'))) . PHP_EOL . 'Стоимость: ' . $request->input('priceSum');
         $QR = QrCode::encoding('UTF-8')->size(200)->generate($QRvalue);

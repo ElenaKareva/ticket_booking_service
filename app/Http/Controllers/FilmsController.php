@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Film;
-use App\Http\Requests\FilmsRequest;
+use App\Http\Requests\FilmRequest;
+use App\Services\FilmService;
+use Illuminate\Http\Response;
 
 class FilmsController extends Controller
 {
@@ -13,16 +14,9 @@ class FilmsController extends Controller
         return view ('admin', ['films'=>Film::all()]); 
     }
 
-    public function addFilm(FilmsRequest $request) 
+    public function addFilm(FilmRequest $request, FilmService $filmService) 
     {
-        $image = $request->file('image')->store('uploads', 'public');
-        $film = new Film();
-        $film->title = $request->input('title');
-        $film->duration = $request->input('duration');
-        $film->description = $request->input('description');
-        $film->country = $request->input('country');
-        $film->image = $image;
-        $film->save();
+        $filmService->addFilm($request);
         return redirect()->route('admin')->with('success', 'Фильм добавлен');
     }
 

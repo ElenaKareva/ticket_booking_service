@@ -74,7 +74,7 @@ $(document).ready(function () {
           if (chairs.checked) {
             let id = chairs.value;
             $.ajax({
-              url: '/config/update',
+              url: 'admin/config/update',
               type: 'POST',
               data: {
                 id: id,

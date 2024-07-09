@@ -20,7 +20,7 @@ pricesHall.forEach(el => el.addEventListener('click', function () {
   standartPrice.value = '';
   vipPrice.value = '';
   $.ajax({
-    url: '/price',
+    url: 'admin/price',
     type: 'GET',
     data: {
       id: el.value
@@ -34,9 +34,9 @@ pricesHall.forEach(el => el.addEventListener('click', function () {
     }
   });
   $('#save_new_price').click(function () {
-    if(el.checked) {
+    if (el.checked) {
       $.ajax({
-        url: '/price/update',
+        url: 'admin/price/update',
         type: 'POST',
         data: {
           id: el.value,
@@ -47,10 +47,10 @@ pricesHall.forEach(el => el.addEventListener('click', function () {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (data) {
-          alert ('Цены успешно обновлены')
+          alert('Цены успешно обновлены')
         },
         error: function () {
-          alert ('Ошибка! Поле "Цена" должно быть заполнено и содержать цифры')
+          alert('Ошибка! Поле "Цена" должно быть заполнено и содержать цифры')
         }
       })
     }
@@ -70,6 +70,22 @@ closeFilmPopup.addEventListener('click', function (e) {
   e.preventDefault();
   addFilmPopup.classList.toggle('active');
 });
+
+//открываем popup удаление фильма
+const deleteFilm = document.getElementById('delete_film');
+const deleteFilmPopup = document.getElementById('delete_film_popup');
+deleteFilm.addEventListener('click', function () {
+  deleteFilmPopup.classList.toggle('active');
+})
+
+// закрываем popup удаления фильма
+const closeFilmDeletePopup = document.getElementById('close_filmDelete_popup');
+closeFilmDeletePopup.addEventListener('click', function (e) {
+  e.preventDefault();
+  deleteFilmPopup.classList.toggle('active');
+});
+
+//отображение списка фильмов
 
 
 let addSessions = Array.from(document.querySelectorAll('.conf-step__movie'));
@@ -98,11 +114,12 @@ document.getElementById('date_limit').min = new Date().toISOString().split("T")[
 
 //Checkbox
 var checkboxes = document.querySelectorAll('.checkbox-wrapper input[type="checkbox');
-checkboxes.forEach(function(checkbox) {
-  checkbox.addEventListener('change', function() { 
-  if (this.checked) {
-     this.parentElement.classList.add('checked'); 
-    } else {     this.parentElement.classList.remove('checked'); 
-} 
-});
+checkboxes.forEach(function (checkbox) {
+  checkbox.addEventListener('change', function () {
+    if (this.checked) {
+      this.parentElement.classList.add('checked');
+    } else {
+      this.parentElement.classList.remove('checked');
+    }
+  });
 })

@@ -16,6 +16,8 @@
 @include('popups.hall_add_popup')
 @include('popups.film_add_popup')
 @include('popups.session_add_popup')
+@include('popups.film_delete_popup')
+
 
 <body>
   <header class="page-header">
@@ -128,6 +130,9 @@
         <p class="conf-step__paragraph">
           <button class="conf-step__button conf-step__button-accent" id="create_film">Добавить фильм</button>
         </p>
+        <p class="conf-step__paragraph">
+          <button class="conf-step__button conf-step__button-accent" id="delete_film">Удалить фильм</button>
+        </p>
         <p class="conf-step__paragraph">Нажмите на фильм для добавления в сетку сеансов:</p>
         <div class="conf-step__movies">
           @foreach($films as $film)
@@ -135,7 +140,7 @@
             <img class="conf-step__movie-poster" alt="poster" src="{{ asset('storage/'.$film->image) }}">
             <h3 class="conf-step__movie-title">{{ $film->title }}</h3>
             <p class="conf-step__movie-duration">{{ $film->duration }} минут</p>
-            <a href="{{ route('deleteFilm', $film->id) }}"><button class="conf-step__button conf-step__button-trash"></button></a>
+            <!--<a href="{{ route('deleteFilm', $film->id) }}"><button class="conf-step__button conf-step__button-trash"></button></a>-->
           </div>
           @endforeach
         </div>

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FilmsRequest extends FormRequest
+class FilmRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,7 +18,7 @@ class FilmsRequest extends FormRequest
             'duration'=>['required', 'integer'], 
             'description'=>['required'], 
             'country'=>['required'], 
-            //'image'=>['required', 'mimes:jpg,jpeg,png'], 
+            'image'=>['required', 'mimes:jpg,jpeg,png'], 
         ];
     }
 
@@ -28,7 +28,7 @@ class FilmsRequest extends FormRequest
         'title.min'=>'Поле должно содержать минимум 3 символа',
         'title.max'=>'Поле должно содержать ммаксимум 255 символов',
         'duration.integer'=>'Поле должно содержать целые числа',
-        //'image.mimes'=>'Поддерживаются только форматы jpg,jpeg,png',
+        'image.mimes'=>'Поддерживаются только форматы jpg,jpeg,png',
       ]; 
     }
 }
